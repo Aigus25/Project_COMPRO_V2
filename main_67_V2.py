@@ -1,4 +1,5 @@
 import struct
+import unicodedata
 import os
 import datetime
 
@@ -28,7 +29,7 @@ ENROLL_FILE = "enrollments.dat"
 LOG_FILE = "operations.log"
 
 # กฎระเบียบการลงทะเบียน: นักศึกษา 1 คนลงทะเบียนรวมกันได้ไม่เกินกี่หน่วยกิตต่อภาคเรียน
-MAX_CREDITS_PER_STUDENT = 22
+MAX_CREDITS_PER_STUDENT = 16
 
 
 # ============================================================
@@ -95,6 +96,39 @@ def ask_float(prompt, allow_empty=False, default=None):
             return float(s)
         except ValueError:
             print("กรุณาป้อนตัวเลขเท่านั้น ลองใหม่อีกครั้ง")
+
+
+def ask_text(prompt, allow_empty=False, default=None):
+    """รับข้อความที่เป็นตัวอักษรและช่องว่าง (อนุญาต . และ - สำหรับคำนำหน้าชื่อ/ชื่อสกุล)"""
+    while True:
+        s = input(prompt).strip()
+        if allow_empty and s == "":
+            return default
+        if s and all(ch.isalpha() or unicodedata.category(ch).startswith("M") or ch.isspace() or ch in ".-" for ch in s):
+            return s
+        print("กรุณาป้อนตัวอักษรเท่านั้น (สามารถเว้นวรรคหรือใช้ . และ - ได้)")
+
+
+def ask_bounded_int(prompt, minimum, maximum, allow_empty=False, default=None):
+    while True:
+        s = input(prompt).strip()
+        if allow_empty and s == "":
+            return default
+        try:
+            value = int(s)
+            if minimum <= value <= maximum:
+                return value
+            print(f"กรุณาป้อนค่าระหว่าง {minimum}-{maximum} เท่านั้น")
+        except ValueError:
+            print("กรุณาป้อนตัวเลขจำนวนเต็มเท่านั้น ลองใหม่อีกครั้ง")
+
+
+def ask_numeric_code(prompt, label="รหัสวิชา"):
+    while True:
+        s = input(prompt).strip()
+        if s.isdigit():
+            return s
+        print(f"{label}ต้องเป็นตัวเลขเท่านั้น ลองใหม่อีกครั้ง")
 
 
 def ask_student_code(prompt, check_duplicate=True):
@@ -165,8 +199,8 @@ def id_exists(filename, fmt, size, target_id, active_only=True):
 # ============================================================
 #  ข้อมูลสมาชิกกลุ่ม (Default Students)
 # ============================================================
-# เก็บชื่อภาษาอังกฤษสำหรับการแสดงผลใน CLI เพื่อให้จัดความกว้างของตารางง่าย
-# และคงโครงสร้าง Student record เดิมทุกประการ
+# เก็บข้อมูลสมาชิกกลุ่มที่ต้องมีในระบบตั้งต้น
+# และใช้โครงสร้าง Student record เดิมทุกประการ
 DEFAULT_STUDENTS = [
     (69, "6906022610410", "Kuananon Puriphongphan", "INE", 1),
     (69, "6906022610029", "Thitiwat Thaicharoen", "INE", 1),
@@ -222,11 +256,11 @@ def seed_default_students():
 
 def add_student():
     print("\n--- เพิ่มนักศึกษาใหม่ ---")
-    student_id = ask_int("ป้อน Student ID / ปีการศึกษา (เช่น 68, 69): ")
+    student_id = ask_bounded_int("ป้อน Student ID / ปีการศึกษา (เช่น 68, 69): ", 1, 69)
     code = ask_student_code("ป้อนรหัสนักศึกษา (ตัวเลข 13 หลัก เช่น 6906022610067): ")
-    name = input("ป้อนชื่อ-สกุล: ")
-    major = input("ป้อนสาขาวิชา: ")
-    year = ask_int("ป้อนชั้นปี: ")
+    name = ask_text("ป้อนชื่อ-สกุล: ")
+    major = ask_text("ป้อนสาขาวิชา: ")
+    year = ask_bounded_int("ป้อนชั้นปี: ", 1, 5)
 
     code_b = encode_fixed(code, 15)
     name_b = encode_fixed(name, 50)
@@ -262,8 +296,8 @@ def update_student():
                 found = True
                 curr_name = decode_str(u[2])
                 print(f"พบข้อมูลเดิม: {curr_name} (ID/ปี: {u[0]})")
-                new_name = input("ชื่อใหม่ (Enter = ไม่เปลี่ยน): ") or curr_name
-                new_year = ask_int("ชั้นปีใหม่ (Enter = ไม่เปลี่ยน): ", allow_empty=True, default=u[4])
+                new_name = ask_text("ชื่อใหม่ (Enter = ไม่เปลี่ยน): ", allow_empty=True, default=curr_name)
+                new_year = ask_bounded_int("ชั้นปีใหม่ (Enter = ไม่เปลี่ยน): ", 1, 5, allow_empty=True, default=u[4])
 
                 name_b = encode_fixed(new_name, 50)
                 packed_new = struct.pack(STUDENT_FORMAT, u[0], u[1], name_b, u[3], new_year, 1)
@@ -367,12 +401,19 @@ def view_students():
 def add_course():
     print("\n--- เพิ่มรายวิชาใหม่ ---")
     course_id = ask_int("ป้อน Course ID (เช่น 1001): ")
-    code = input("ป้อนรหัสวิชา (เช่น CS101): ")
-    title = input("ป้อนชื่อรายวิชา: ")
-    category = input("ป้อนหมวดวิชา (เช่น Core, Elective, GenEd): ")
-    credits = ask_int("ป้อนจำนวนหน่วยกิต: ")
+    code = ask_numeric_code("ป้อนรหัสวิชา (ตัวเลขเท่านั้น เช่น 060233115): ")
+    title = input("ป้อนชื่อรายวิชา: ").strip()
+
+    while True:
+        category = input("ป้อนหมวดวิชา (Core / Elective / GenEd): ").strip()
+        if category.lower() in {"core", "elective", "gened"}:
+            category = {"core": "Core", "elective": "Elective", "gened": "GenEd"}[category.lower()]
+            break
+        print("หมวดวิชาต้องเป็น Core, Elective หรือ GenEd เท่านั้น")
+
+    credits = ask_bounded_int("ป้อนจำนวนหน่วยกิต (1-3): ", 1, 3)
     fee = ask_float("ป้อนค่าธรรมเนียมวิชา (บาท): ")
-    instructor = input("ป้อนชื่ออาจารย์ผู้สอน (เว้นว่างได้ ถ้ายังไม่กำหนด): ").strip()
+    instructor = ask_text("ป้อนชื่ออาจารย์ผู้สอน (เว้นว่างได้ ถ้ายังไม่กำหนด): ", allow_empty=True, default="").strip()
 
     if id_exists(COURSE_FILE, COURSE_FORMAT, COURSE_SIZE, course_id):
         print(f"มี Course ID {course_id} ในระบบอยู่แล้ว (สถานะ Active) ห้ามซ้ำ!\n")
