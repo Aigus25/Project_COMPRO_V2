@@ -1,20 +1,21 @@
-Course Registration System - Report 1
-รายวิชาที่เปิดให้ลงทะเบียน
-Generated At : 2026-09-30 14:57:26
+=====================================================================================================================================
+COURSE REGISTRATION SYSTEM - REPORT 1
+รายงานรายวิชาและจำนวนหน่วยกิต
+Generated At : 2026-10-02 00:47:50
+=====================================================================================================================================
 
-------------------------------------------------------------------------------------------
-| Course ID  | Course Code     | Course Name                         | Credits |
-------------------------------------------------------------------------------------------
-| 1001       | 060233115       | COMPUTER PROGRAMMING                | 3       |
-| 1002       | 060233106       | INFO & NETWORK ENG DRAWING          | 3       |
-| 1003       | 060233112       | DATA ENGINEERING                    | 3       |
-| 1004       | 060233114       | STAT FOR DATA ENG & SCIENTISTS      | 3       |
-| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       |
-| 1006       | 060233101       | INTRO TO INFO & NETWORK ENG         | 3       |
-| 1007       | 060233118       | SOFTWARE ENGINEERING                | 3       |
-| 1008       | 060233205       | ADVANCED NETWORK & PROTOCOL         | 3       |
-| 1009       | 060233212       | BIG DATA ANALYTICS                  | 3       |
-| 1010       | 060233214       | INFOR & NETW ENGR SEMINAR           | 1       |
-------------------------------------------------------------------------------------------
-จำนวนวิชาที่เปิดให้ลงทะเบียน : 10 วิชา
-รวมหน่วยกิตของวิชาที่เปิดให้ลงทะเบียน : 28 หน่วยกิต
+| No.  | Course ID  | Course Code     | Course Name                            | Credits | Instructor                                    |
+-------------------------------------------------------------------------------------------------------------------------------------
+| 1    | 1001       | 060233101       | INTRO TO INFO & NETWORK ENG            | 3       | Asst.Prof.Dr.NITIGAN NAKJUATONG               |
+| 2    | 1002       | 060233106       | INFO & NETWORK ENG DRAWING             | 3       | Ajarn.KAROON INTAWAD                          |
+| 3    | 1003       | 060233112       | DATA ENGINEERING                       | 3       | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       |
+| 4    | 1004       | 060233114       | STAT FOR DATA ENG & SCIENTISTS         | 3       | Ajarn Dr.KARN NA SRITHA                       |
+| 5    | 1005       | 060233115       | COMPUTER PROGRAMMING                   | 3       | Assoc.Prof.Dr.ANIRACH MINGKHWAN               |
+| 6    | 1006       | 060233118       | SOFTWARE ENGINEERING                   | 3       | Asst.Prof.Dr.SUPEETI KULCHAN                  |
+| 7    | 1007       | 060233205       | ADVANCED NETWORK & PROTOCOL            | 3       | Asst.Prof.Dr.KHANISTA NAMEE                   |
+| 8    | 1008       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS    | 3       | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       |
+| 9    | 1009       | 060233212       | BIG DATA ANALYTICS                     | 3       | Ajarn Dr.SIRINTRA VAIWSRI                     |
+| 10   | 1010       | 060233214       | INFOR & NETW ENGR SEMINAR              | 1       | Asst.Prof.Dr.NITIGAN NAKJUATONG               |
+-------------------------------------------------------------------------------------------------------------------------------------
+Total Active Courses  : 10
+Total Credits         : 28

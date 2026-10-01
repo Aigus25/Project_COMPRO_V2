@@ -1,88 +1,106 @@
-Course Registration System - Report 2
+=============================================================================================================================
+COURSE REGISTRATION SYSTEM - REPORT 2
 รายงานการลงทะเบียนของนักศึกษาทั้งหมด
-Generated At : 2026-09-30 14:57:26
+Generated At : 2026-10-02 00:47:50
+=============================================================================================================================
 
-===== นักศึกษาคนที่ 1 =====
+=============================================================================================================================
+STUDENT #1
 Student Code : 6906022610410
 Name         : Kuananon Puriphongphan
 Major        : INE
 Year         : 1
+-----------------------------------------------------------------------------------------------------------------------------
 
-=== รายวิชาที่ลงทะเบียน/เคยลงทะเบียน ===
---------------------------------------------------------------------------------------------------------------
-| Course ID  | Course Code     | Course Name                         | Credits | Status     |
---------------------------------------------------------------------------------------------------------------
-| 1009       | 060233212       | BIG DATA ANALYTICS                  | 3       | Dropped    |
-| 1006       | 060233101       | INTRO TO INFO & NETWORK ENG         | 3       | Active     |
-| 1002       | 060233106       | INFO & NETWORK ENG DRAWING          | 3       | Dropped    |
-| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       | Active     |
-| 1003       | 060233112       | DATA ENGINEERING                    | 3       | Active     |
---------------------------------------------------------------------------------------------------------------
-หน่วยกิตที่ลงเรียนอยู่ : 9
-หน่วยกิตที่ดรอป       : 6
-หน่วยกิตที่เหลือ       : 7
-เพดานหน่วยกิต         : 16
+Enrolled Courses
+-----------------------------------------------------------------------------------------------------------------------------
+| No.  | Course ID  | Course Name                         | Instructor                                    | Credits | Status     |
+-----------------------------------------------------------------------------------------------------------------------------
+| 1    | 1006       | SOFTWARE ENGINEERING                | Asst.Prof.Dr.SUPEETI KULCHAN                  | 3       | Active     |
+| 2    | 1002       | INFO & NETWORK ENG DRAWING          | Ajarn.KAROON INTAWAD                          | 3       | Dropped    |
+| 3    | 1005       | COMPUTER PROGRAMMING                | Assoc.Prof.Dr.ANIRACH MINGKHWAN               | 3       | Active     |
+| 4    | 1003       | DATA ENGINEERING                    | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       | 3       | Active     |
+-----------------------------------------------------------------------------------------------------------------------------
+Active Courses   : 3
+Dropped Courses  : 1
+Active Credits   : 9
+Dropped Credits  : 3
+Remaining Credits: 7
+Credit Limit     : 16
 
-===== นักศึกษาคนที่ 2 =====
+=============================================================================================================================
+STUDENT #2
 Student Code : 6906022610029
 Name         : Thitiwat Thaicharoen
 Major        : INE
 Year         : 1
+-----------------------------------------------------------------------------------------------------------------------------
 
-=== รายวิชาที่ลงทะเบียน/เคยลงทะเบียน ===
---------------------------------------------------------------------------------------------------------------
-| Course ID  | Course Code     | Course Name                         | Credits | Status     |
---------------------------------------------------------------------------------------------------------------
-| 1003       | 060233112       | DATA ENGINEERING                    | 3       | Active     |
-| 1009       | 060233212       | BIG DATA ANALYTICS                  | 3       | Active     |
-| 1001       | 060233115       | COMPUTER PROGRAMMING                | 3       | Active     |
-| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       | Active     |
-| 1008       | 060233205       | ADVANCED NETWORK & PROTOCOL         | 3       | Dropped    |
---------------------------------------------------------------------------------------------------------------
-หน่วยกิตที่ลงเรียนอยู่ : 12
-หน่วยกิตที่ดรอป       : 3
-หน่วยกิตที่เหลือ       : 4
-เพดานหน่วยกิต         : 16
+Enrolled Courses
+-----------------------------------------------------------------------------------------------------------------------------
+| No.  | Course ID  | Course Name                         | Instructor                                    | Credits | Status     |
+-----------------------------------------------------------------------------------------------------------------------------
+| 1    | 1006       | SOFTWARE ENGINEERING                | Asst.Prof.Dr.SUPEETI KULCHAN                  | 3       | Active     |
+| 2    | 1003       | DATA ENGINEERING                    | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       | 3       | Active     |
+| 3    | 1009       | BIG DATA ANALYTICS                  | Ajarn Dr.SIRINTRA VAIWSRI                     | 3       | Active     |
+| 4    | 1001       | INTRO TO INFO & NETWORK ENG         | Asst.Prof.Dr.NITIGAN NAKJUATONG               | 3       | Active     |
+| 5    | 1005       | COMPUTER PROGRAMMING                | Assoc.Prof.Dr.ANIRACH MINGKHWAN               | 3       | Active     |
+| 6    | 1008       | CLOUD ARCHITECTURE AND APPLICATIONS | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       | 3       | Dropped    |
+-----------------------------------------------------------------------------------------------------------------------------
+Active Courses   : 5
+Dropped Courses  : 1
+Active Credits   : 15
+Dropped Credits  : 3
+Remaining Credits: 1
+Credit Limit     : 16
 
-===== นักศึกษาคนที่ 3 =====
+=============================================================================================================================
+STUDENT #3
 Student Code : 6806022610241
 Name         : Laksika Phomphan
 Major        : INE
 Year         : 2
+-----------------------------------------------------------------------------------------------------------------------------
 
-=== รายวิชาที่ลงทะเบียน/เคยลงทะเบียน ===
---------------------------------------------------------------------------------------------------------------
-| Course ID  | Course Code     | Course Name                         | Credits | Status     |
---------------------------------------------------------------------------------------------------------------
-| 1006       | 060233101       | INTRO TO INFO & NETWORK ENG         | 3       | Active     |
-| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       | Dropped    |
-| 1007       | 060233118       | SOFTWARE ENGINEERING                | 3       | Active     |
-| 1003       | 060233112       | DATA ENGINEERING                    | 3       | Active     |
-| 1008       | 060233205       | ADVANCED NETWORK & PROTOCOL         | 3       | Active     |
---------------------------------------------------------------------------------------------------------------
-หน่วยกิตที่ลงเรียนอยู่ : 12
-หน่วยกิตที่ดรอป       : 3
-หน่วยกิตที่เหลือ       : 4
-เพดานหน่วยกิต         : 16
+Enrolled Courses
+-----------------------------------------------------------------------------------------------------------------------------
+| No.  | Course ID  | Course Name                         | Instructor                                    | Credits | Status     |
+-----------------------------------------------------------------------------------------------------------------------------
+| 1    | 1006       | SOFTWARE ENGINEERING                | Asst.Prof.Dr.SUPEETI KULCHAN                  | 3       | Active     |
+| 2    | 1005       | COMPUTER PROGRAMMING                | Assoc.Prof.Dr.ANIRACH MINGKHWAN               | 3       | Dropped    |
+| 3    | 1007       | ADVANCED NETWORK & PROTOCOL         | Asst.Prof.Dr.KHANISTA NAMEE                   | 3       | Active     |
+| 4    | 1003       | DATA ENGINEERING                    | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       | 3       | Active     |
+| 5    | 1008       | CLOUD ARCHITECTURE AND APPLICATIONS | Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA       | 3       | Active     |
+-----------------------------------------------------------------------------------------------------------------------------
+Active Courses   : 4
+Dropped Courses  : 1
+Active Credits   : 12
+Dropped Credits  : 3
+Remaining Credits: 4
+Credit Limit     : 16
 
-===== นักศึกษาคนที่ 4 =====
+=============================================================================================================================
+STUDENT #4
 Student Code : 6806022610259
 Name         : Pannawit Numwong
 Major        : INE
 Year         : 2
+-----------------------------------------------------------------------------------------------------------------------------
 
-=== รายวิชาที่ลงทะเบียน/เคยลงทะเบียน ===
---------------------------------------------------------------------------------------------------------------
-| Course ID  | Course Code     | Course Name                         | Credits | Status     |
---------------------------------------------------------------------------------------------------------------
-| 1002       | 060233106       | INFO & NETWORK ENG DRAWING          | 3       | Dropped    |
-| 1010       | 060233214       | INFOR & NETW ENGR SEMINAR           | 1       | Active     |
-| 1001       | 060233115       | COMPUTER PROGRAMMING                | 3       | Active     |
-| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       | Active     |
-| 1009       | 060233212       | BIG DATA ANALYTICS                  | 3       | Active     |
---------------------------------------------------------------------------------------------------------------
-หน่วยกิตที่ลงเรียนอยู่ : 10
-หน่วยกิตที่ดรอป       : 3
-หน่วยกิตที่เหลือ       : 6
-เพดานหน่วยกิต         : 16
+Enrolled Courses
+-----------------------------------------------------------------------------------------------------------------------------
+| No.  | Course ID  | Course Name                         | Instructor                                    | Credits | Status     |
+-----------------------------------------------------------------------------------------------------------------------------
+| 1    | 1002       | INFO & NETWORK ENG DRAWING          | Ajarn.KAROON INTAWAD                          | 3       | Dropped    |
+| 2    | 1010       | INFOR & NETW ENGR SEMINAR           | Asst.Prof.Dr.NITIGAN NAKJUATONG               | 1       | Active     |
+| 3    | 1001       | INTRO TO INFO & NETWORK ENG         | Asst.Prof.Dr.NITIGAN NAKJUATONG               | 3       | Active     |
+| 4    | 1005       | COMPUTER PROGRAMMING                | Assoc.Prof.Dr.ANIRACH MINGKHWAN               | 3       | Active     |
+| 5    | 1009       | BIG DATA ANALYTICS                  | Ajarn Dr.SIRINTRA VAIWSRI                     | 3       | Active     |
+-----------------------------------------------------------------------------------------------------------------------------
+Active Courses   : 4
+Dropped Courses  : 1
+Active Credits   : 10
+Dropped Credits  : 3
+Remaining Credits: 6
+Credit Limit     : 16
 
