@@ -1,0 +1,20 @@
+Course Registration System - Report 1
+รายชื่อวิชาที่เปิด/มีอยู่ในระบบ
+Generated At : 2026-09-30 10:59:40
+
+------------------------------------------------------------------------------------------
+| Course ID  | Course Code     | Course Name                         | Credits |
+------------------------------------------------------------------------------------------
+| 1001       | 060233115       | COMPUTER PROGRAMMING                | 3       |
+| 1002       | 060233106       | INFO & NETWORK ENG DRAWING          | 3       |
+| 1003       | 060233112       | DATA ENGINEERING                    | 3       |
+| 1004       | 060233114       | STAT FOR DATA ENG & SCIENTISTS      | 3       |
+| 1005       | 060233211       | CLOUD ARCHITECTURE AND APPLICATIONS | 3       |
+| 1006       | 060233101       | INTRO TO INFO & NETWORK ENG         | 3       |
+| 1007       | 060233118       | SOFTWARE ENGINEERING                | 3       |
+| 1008       | 060233205       | ADVANCED NETWORK & PROTOCOL         | 3       |
+| 1009       | 060233212       | BIG DATA ANALYTICS                  | 3       |
+| 1010       | 060233214       | INFOR & NETW ENGR SEMINAR           | 1       |
+------------------------------------------------------------------------------------------
+รวมรายวิชา Active : 10 วิชา
+รวมหน่วยกิตของรายวิชา Active ทั้งหมด : 28 หน่วยกิต
