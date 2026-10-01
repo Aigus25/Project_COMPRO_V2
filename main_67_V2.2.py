@@ -893,106 +893,534 @@ def view_enrollments():
 
 
 # ============================================================
-#  4) สร้างรายงานสรุป (report.txt)
+#  4) สร้างรายงานสรุป
 # ============================================================
 
-def generate_report():
-    print("\n--- กำลังสร้างไฟล์รายงาน report.txt ---")
+def display_width(text):
+    """
+    คำนวณความกว้างสำหรับแสดงผล
+    - ตัวอักษรทั่วไป = 1
+    - อักขระ combining / mark = 0
+    """
+    import unicodedata
 
-    students = read_all_records(STUDENT_FILE, STUDENT_FORMAT, STUDENT_SIZE)
-    courses = read_all_records(COURSE_FILE, COURSE_FORMAT, COURSE_SIZE)
-    enrolls = read_all_records(ENROLL_FILE, ENROLL_FORMAT, ENROLL_SIZE)
+    text = str(text)
+    width = 0
 
-    active_students = [s for s in students if s[5] == 1]
-    active_courses = [c for c in courses if c[6] == 1]
-    active_enrolls = [e for e in enrolls if e[4] == 1]
+    for ch in text:
+        category = unicodedata.category(ch)
 
-    fees = [c[5] for c in active_courses] or [0.0]
-    min_fee, max_fee = min(fees), max(fees)
-    avg_fee = sum(fees) / len(fees)
+        if category in ("Mn", "Me", "Cf"):
+            continue
 
-    cat_counts = {}
-    for c in active_courses:
-        cat = decode_str(c[3])
-        cat_counts[cat] = cat_counts.get(cat, 0) + 1
+        width += 1
 
-    free_students = len(students) - len(active_students)
-    free_courses = len(courses) - len(active_courses)
-    free_enrolls = len(enrolls) - len(active_enrolls)
+    return width
+
+
+def pad_text(text, width):
+    """
+    เติมช่องว่างให้ข้อความมีความกว้างตามที่กำหนด
+    โดยไม่ตัดข้อความทิ้ง
+    """
+    text = str(text)
+    current_width = display_width(text)
+
+    if current_width >= width:
+        return text
+
+    return text + " " * (width - current_width)
+
+
+# ============================================================
+# Report 1
+# ============================================================
+
+def generate_report1():
+    """Report 1: รายชื่อวิชาทั้งหมดและจำนวนหน่วยกิต"""
+
+    courses = [
+        c
+        for c in read_all_records(
+            COURSE_FILE,
+            COURSE_FORMAT,
+            COURSE_SIZE
+        )
+        if c[6] == 1
+    ]
 
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename = "report1_courses.txt"
 
-    recent_logs = []
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "r", encoding="utf-8") as f:
-            recent_logs = f.readlines()[-10:]
+    # ความกว้างของแต่ละ column
+    NO_W = 4
+    ID_W = 10
+    CODE_W = 15
+    NAME_W = 38
+    CREDIT_W = 7
+    INSTRUCTOR_W = 45
 
-    with open("report.txt", "w", encoding="utf-8") as f:
-        f.write("Course Registration System - Summary Report\n")
+    # ความกว้างรวมของตาราง
+    TABLE_W = (
+        NO_W
+        + ID_W
+        + CODE_W
+        + NAME_W
+        + CREDIT_W
+        + INSTRUCTOR_W
+        + 14
+    )
+
+    with open(filename, "w", encoding="utf-8") as f:
+
+        f.write("=" * TABLE_W + "\n")
+        f.write("COURSE REGISTRATION SYSTEM - REPORT 1\n")
+        f.write("รายงานรายวิชาและจำนวนหน่วยกิต\n")
         f.write(f"Generated At : {now}\n")
-        f.write("App Version  : 2.1 (Multi-Student ID Supported)\n")
-        f.write("Endianness   : Little-Endian\n")
-        f.write("Encoding     : UTF-8 (fixed-length)\n")
-        f.write(f"Files        : {STUDENT_FILE}, {COURSE_FILE}, {ENROLL_FILE}\n\n")
+        f.write("=" * TABLE_W + "\n\n")
 
-        f.write("=== รายวิชา (Courses) ===\n")
-        sep = "-" * 120 + "\n"
-        f.write(sep)
-        f.write(f"| {'ID':<6} | {'Code':<10} | {'Title':<20} | {'Category':<12} | {'Credits':<7} | {'Fee':<9} | {'Status':<7} | {'Full':<5} | {'Instructor':<22} |\n")
-        f.write(sep)
-        for c in courses:
-            st = "Active" if c[6] == 1 else "Deleted"
-            full = "Yes" if c[7] == 1 else "No"
-            instructor = decode_str(c[8]) or "-"
-            f.write(f"| {c[0]:<6} | {decode_str(c[1])[:10]:<10} | {decode_str(c[2])[:20]:<20} | "
-                     f"{decode_str(c[3])[:12]:<12} | {c[4]:<7} | {c[5]:<9.2f} | {st:<7} | {full:<5} | {instructor[:22]:<22} |\n")
-        f.write(sep + "\n")
+        # Header
+        f.write(
+            f"| {'No.':<{NO_W}} "
+            f"| {'Course ID':<{ID_W}} "
+            f"| {'Course Code':<{CODE_W}} "
+            f"| {'Course Name':<{NAME_W}} "
+            f"| {'Credits':<{CREDIT_W}} "
+            f"| {'Instructor':<{INSTRUCTOR_W}} |\n"
+        )
 
-        f.write("=== นักศึกษา (Students) ===\n")
-        sep2 = "-" * 75 + "\n"
-        f.write(sep2)
-        f.write(f"| {'YearID':<6} | {'Code':<15} | {'Name':<25} | {'Major':<15} | {'Status':<7} |\n")
-        f.write(sep2)
-        for s in students:
-            st = "Active" if s[5] == 1 else "Deleted"
-            f.write(f"| {s[0]:<6} | {decode_str(s[1])[:15]:<15} | {decode_str(s[2])[:25]:<25} | "
-                     f"{decode_str(s[3])[:15]:<15} | {st:<7} |\n")
-        f.write(sep2 + "\n")
+        f.write("-" * TABLE_W + "\n")
 
-        f.write("=== การลงทะเบียน (Enrollments) ===\n")
-        sep3 = "-" * 75 + "\n"
-        f.write(sep3)
-        f.write(f"| {'EnrollID':<9} | {'StudentCode':<15} | {'CourseID':<9} | {'Date':<20} | {'Status':<9} |\n")
-        f.write(sep3)
-        for e in enrolls:
-            st = "Active" if e[4] == 1 else "Cancelled"
-            f.write(f"| {e[0]:<9} | {decode_str(e[1]):<15} | {e[2]:<9} | {decode_str(e[3]):<20} | {st:<9} |\n")
-        f.write(sep3 + "\n")
+        for i, c in enumerate(courses, 1):
 
-        f.write("Summary\n")
-        f.write(f"- Courses  : Total={len(courses)}, Active={len(active_courses)}, Deleted={free_courses}\n")
-        f.write(f"- Students : Total={len(students)}, Active={len(active_students)}, Deleted={free_students}\n")
-        f.write(f"- Enrolls  : Total={len(enrolls)}, Active={len(active_enrolls)}, Cancelled={free_enrolls}\n\n")
+            code = decode_str(c[1]).strip()
+            name = decode_str(c[2]).strip()
+            inst = decode_str(c[8]).strip()
 
-        f.write("Fee Statistics (THB, Active courses only)\n")
-        f.write(f"- Min : {min_fee:.2f}\n")
-        f.write(f"- Max : {max_fee:.2f}\n")
-        f.write(f"- Avg : {avg_fee:.2f}\n\n")
+            if not inst:
+                inst = "(ยังไม่มีอาจารย์สอน)"
 
-        f.write("Courses by Category (Active only)\n")
-        for cat_name, count in cat_counts.items():
-            f.write(f"- {cat_name} : {count}\n")
-        f.write("\n")
+            # สำคัญ:
+            # ไม่มี [:22] / [:25] / [:40]
+            # ข้อมูลชื่อจะไม่ถูกตัด
+            row = (
+                f"| {str(i):<{NO_W}} "
+                f"| {str(c[0]):<{ID_W}} "
+                f"| {pad_text(code, CODE_W)} "
+                f"| {pad_text(name, NAME_W)} "
+                f"| {str(c[4]):<{CREDIT_W}} "
+                f"| {pad_text(inst, INSTRUCTOR_W)} |"
+            )
 
-        f.write("ประวัติการทำงานล่าสุด (Recent Operation History)\n")
-        if recent_logs:
-            for line in recent_logs:
-                f.write(f"- {line.strip()}\n")
+            f.write(row + "\n")
+
+        f.write("-" * TABLE_W + "\n")
+        f.write(f"Total Active Courses  : {len(courses)}\n")
+        f.write(
+            f"Total Credits         : "
+            f"{sum(c[4] for c in courses)}\n"
+        )
+
+    log_action(f"สร้าง Report 1 -> {filename}")
+    print(f"สร้าง {filename} เรียบร้อยแล้ว!\n")
+
+
+# ============================================================
+# Report 2
+# ============================================================
+
+def generate_report2():
+    """Report 2: รายงานการลงทะเบียนของนักศึกษาทั้งหมดในไฟล์เดียว"""
+
+    students = [
+        s
+        for s in read_all_records(
+            STUDENT_FILE,
+            STUDENT_FORMAT,
+            STUDENT_SIZE
+        )
+        if s[5] == 1
+    ]
+
+    courses = {
+        c[0]: c
+        for c in read_all_records(
+            COURSE_FILE,
+            COURSE_FORMAT,
+            COURSE_SIZE
+        )
+    }
+
+    enrolls = read_all_records(
+        ENROLL_FILE,
+        ENROLL_FORMAT,
+        ENROLL_SIZE
+    )
+
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename = "report2_students.txt"
+
+    # ความกว้างของตาราง
+    NO_W = 4
+    ID_W = 10
+    NAME_W = 35
+    INSTRUCTOR_W = 45
+    CREDIT_W = 7
+    STATUS_W = 10
+
+    TABLE_W = (
+        NO_W
+        + ID_W
+        + NAME_W
+        + INSTRUCTOR_W
+        + CREDIT_W
+        + STATUS_W
+        + 14
+    )
+
+    with open(filename, "w", encoding="utf-8") as f:
+
+        f.write("=" * TABLE_W + "\n")
+        f.write(
+            "COURSE REGISTRATION SYSTEM - REPORT 2\n"
+        )
+        f.write(
+            "รายงานการลงทะเบียนของนักศึกษาทั้งหมด\n"
+        )
+        f.write(f"Generated At : {now}\n")
+        f.write("=" * TABLE_W + "\n\n")
+
+        if not students:
+            f.write("ไม่มีข้อมูลนักศึกษา Active\n")
+
+        for i, student in enumerate(students, 1):
+
+            code = decode_str(student[1]).strip()
+            name = decode_str(student[2]).strip()
+            major = decode_str(student[3]).strip()
+            year = student[4]
+
+            es = [
+                e
+                for e in enrolls
+                if decode_str(e[1]).strip() == code
+            ]
+
+            active = [
+                e for e in es
+                if e[4] == 1
+            ]
+
+            dropped = [
+                e for e in es
+                if e[4] == 0
+            ]
+
+            ac = sum(
+                courses[e[2]][4]
+                for e in active
+                if e[2] in courses
+            )
+
+            dc = sum(
+                courses[e[2]][4]
+                for e in dropped
+                if e[2] in courses
+            )
+
+            rem = max(
+                0,
+                MAX_CREDITS_PER_STUDENT - ac
+            )
+
+            f.write("=" * TABLE_W + "\n")
+            f.write(f"STUDENT #{i}\n")
+            f.write(f"Student Code : {code}\n")
+            f.write(f"Name         : {name}\n")
+            f.write(f"Major        : {major}\n")
+            f.write(f"Year         : {year}\n")
+            f.write("-" * TABLE_W + "\n\n")
+
+            f.write("Enrolled Courses\n")
+            f.write("-" * TABLE_W + "\n")
+
+            # Header
+            f.write(
+                f"| {'No.':<{NO_W}} "
+                f"| {'Course ID':<{ID_W}} "
+                f"| {'Course Name':<{NAME_W}} "
+                f"| {'Instructor':<{INSTRUCTOR_W}} "
+                f"| {'Credits':<{CREDIT_W}} "
+                f"| {'Status':<{STATUS_W}} |\n"
+            )
+
+            f.write("-" * TABLE_W + "\n")
+
+            if es:
+
+                for no, e in enumerate(es, 1):
+
+                    c = courses.get(e[2])
+
+                    if not c:
+                        continue
+
+                    course_name = decode_str(c[2]).strip()
+                    inst = decode_str(c[8]).strip()
+
+                    if not inst:
+                        inst = "(ยังไม่มีอาจารย์สอน)"
+
+                    status = (
+                        "Active"
+                        if e[4] == 1
+                        else "Dropped"
+                    )
+
+                    row = (
+                        f"| {str(no):<{NO_W}} "
+                        f"| {str(c[0]):<{ID_W}} "
+                        f"| {pad_text(course_name, NAME_W)} "
+                        f"| {pad_text(inst, INSTRUCTOR_W)} "
+                        f"| {str(c[4]):<{CREDIT_W}} "
+                        f"| {status:<{STATUS_W}} |"
+                    )
+
+                    f.write(row + "\n")
+
+            else:
+                f.write("| ไม่มีประวัติการลงทะเบียน\n")
+
+            f.write("-" * TABLE_W + "\n")
+
+            f.write(
+                f"Active Courses   : {len(active)}\n"
+            )
+            f.write(
+                f"Dropped Courses  : {len(dropped)}\n"
+            )
+            f.write(
+                f"Active Credits   : {ac}\n"
+            )
+            f.write(
+                f"Dropped Credits  : {dc}\n"
+            )
+            f.write(
+                f"Remaining Credits: {rem}\n"
+            )
+            f.write(
+                f"Credit Limit     : "
+                f"{MAX_CREDITS_PER_STUDENT}\n\n"
+            )
+
+    log_action(f"สร้าง Report 2 -> {filename}")
+    print(f"สร้าง {filename} เรียบร้อยแล้ว!\n")
+
+
+# ============================================================
+# Report 3
+# ============================================================
+
+def generate_report3():
+    """Report 3: รายงานของอาจารย์ทุกคนและนักศึกษาที่ลงทะเบียนในแต่ละวิชา"""
+
+    courses = [
+        c
+        for c in read_all_records(
+            COURSE_FILE,
+            COURSE_FORMAT,
+            COURSE_SIZE
+        )
+        if c[6] == 1
+    ]
+
+    enrolls = read_all_records(
+        ENROLL_FILE,
+        ENROLL_FORMAT,
+        ENROLL_SIZE
+    )
+
+    students = {
+        decode_str(s[1]).strip(): s
+        for s in read_all_records(
+            STUDENT_FILE,
+            STUDENT_FORMAT,
+            STUDENT_SIZE
+        )
+        if s[5] == 1
+    }
+
+    now = datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+
+    groups = {}
+
+    for c in courses:
+
+        instructor = decode_str(c[8]).strip()
+
+        if not instructor:
+            instructor = "(ยังไม่มีอาจารย์สอน)"
+
+        groups.setdefault(
+            instructor,
+            []
+        ).append(c)
+
+    filename = "report3_instructors.txt"
+
+    with open(filename, "w", encoding="utf-8") as f:
+
+        f.write("=" * 110 + "\n")
+        f.write(
+            "COURSE REGISTRATION SYSTEM - REPORT 3\n"
+        )
+        f.write(
+            "รายงานรายวิชาของอาจารย์ทุกคนและนักศึกษาที่ลงทะเบียน\n"
+        )
+        f.write(f"Generated At : {now}\n")
+        f.write("=" * 110 + "\n\n")
+
+        if not groups:
+            f.write("ไม่มีข้อมูลรายวิชา Active\n")
+
+        for inst, clist in groups.items():
+
+            f.write("=" * 110 + "\n")
+            f.write(f"INSTRUCTOR: {inst}\n")
+            f.write("=" * 110 + "\n\n")
+
+            for c in clist:
+
+                es = [
+                    e
+                    for e in enrolls
+                    if e[2] == c[0]
+                ]
+
+                active = sum(
+                    e[4] == 1
+                    for e in es
+                )
+
+                dropped = sum(
+                    e[4] == 0
+                    for e in es
+                )
+
+                f.write(
+                    f"Course ID   : {c[0]}\n"
+                    f"Course Code : {decode_str(c[1]).strip()}\n"
+                    f"Course Name : {decode_str(c[2]).strip()}\n"
+                    f"Credits     : {c[4]}\n\n"
+                )
+
+                f.write("Enrolled Students\n")
+                f.write("-" * 90 + "\n")
+
+                f.write(
+                    f"| {'No.':<4} | "
+                    f"{'Student Code':<15} | "
+                    f"{'Name':<40} | "
+                    f"{'Status':<10} |\n"
+                )
+
+                f.write("-" * 90 + "\n")
+
+                if es:
+
+                    for no, e in enumerate(es, 1):
+
+                        st = students.get(
+                            decode_str(e[1]).strip()
+                        )
+
+                        if st:
+                            sn = decode_str(
+                                st[2]
+                            ).strip()
+                        else:
+                            sn = "(ไม่พบนักศึกษา Active)"
+
+                        status = (
+                            "Active"
+                            if e[4] == 1
+                            else "Dropped"
+                        )
+
+                        f.write(
+                            f"| {no:<4} | "
+                            f"{decode_str(e[1]).strip():<15} | "
+                            f"{pad_text(sn, 40)} | "
+                            f"{status:<10} |\n"
+                        )
+
+                else:
+                    f.write(
+                        "| ไม่มีนักศึกษาลงทะเบียน\n"
+                    )
+
+                f.write("-" * 90 + "\n")
+                f.write(
+                    f"Active Students  : {active}\n"
+                )
+                f.write(
+                    f"Dropped Students : {dropped}\n"
+                )
+                f.write(
+                    f"Total Records    : "
+                    f"{active + dropped}\n\n"
+                )
+
+    log_action(f"สร้าง Report 3 -> {filename}")
+    print(f"สร้าง {filename} เรียบร้อยแล้ว!\n")
+
+
+# ============================================================
+# สร้าง Report ทั้งหมด
+# ============================================================
+
+def generate_all_reports():
+    """สร้าง Report 1-3 อัตโนมัติ โดยไม่ต้องถามข้อมูลเพิ่ม"""
+
+    generate_report1()
+    generate_report2()
+    generate_report3()
+
+
+# ============================================================
+# Report Menu
+# ============================================================
+
+def report_menu():
+    """เมนูสร้างรายงาน 3 แบบ แยกไฟล์ชัดเจน"""
+
+    while True:
+
+        print("\n---- สร้างรายงาน (Generate Reports) ----")
+        print("1) Report 1 - รายชื่อวิชา")
+        print("2) Report 2 - รายงานของนักศึกษาทั้งหมด")
+        print("3) Report 3 - รายงานของอาจารย์ทั้งหมด")
+        print("0) กลับเมนูอาจารย์")
+
+        c = input("เลือก: ").strip()
+
+        if c == "1":
+            generate_report1()
+
+        elif c == "2":
+            generate_report2()
+
+        elif c == "3":
+            generate_report3()
+
+        elif c == "0":
+            break
+
         else:
-            f.write("- ไม่มีประวัติการทำงาน\n")
+            print("เลือกเมนูไม่ถูกต้อง\n")
 
-    log_action("สร้างรายงาน report.txt")
-    print("สร้างไฟล์ report.txt เรียบร้อยแล้ว!\n")
 
 
 # ============================================================
@@ -1000,39 +1428,35 @@ def generate_report():
 # ============================================================
 
 DEFAULT_COURSES = [
+    (1001, "060233101", "INTRO TO INFO & NETWORK ENG", "Core", 3, 1500.0,
+     "Asst.Prof.Dr.NITIGAN NAKJUATONG"),
 
-    # (Course ID, รหัสวิชา, ชื่อวิชา, หมวด, หน่วยกิต, ค่าธรรมเนียม, อาจารย์ผู้สอน)
+    (1002, "060233106", "INFO & NETWORK ENG DRAWING", "Core", 3, 1500.0,
+     "Ajarn.KAROON INTAWAD"),
 
-    (1001, "060233115", "COMPUTER PROGRAMMING", "Core", 3, 1500.0,
-     "รศ.ดร.อนิราช มิ่งขวัญ"),
-
-    (1002, "060233106", "INFO & NETWORK ENG DRAWING", "Core", 3, 800.0,
-     "อ.การุณย์ อินทวาส"),
-
-    (1003, "060233112", "DATA ENGINEERING", "Core", 3, 1200.0,
-     "ผศ.ดร.ศรายุทธ ธเนศสกุลวัฒนา"),
+    (1003, "060233112", "DATA ENGINEERING", "Core", 3, 1500.0,
+     "Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA"),
 
     (1004, "060233114", "STAT FOR DATA ENG & SCIENTISTS", "Core", 3, 1300.0,
-     "อ.ดร.กาญจน์ ณ ศรีธะ"),
+     "Ajarn Dr.KARN NA SRITHA"),
 
-    (1005, "060233211", "CLOUD ARCHITECTURE AND APPLICATIONS", "Core", 3, 1400.0,
-     "ผศ.ดร.ศรายุทธ ธเนศสกุลวัฒนา"),
+    (1005, "060233115", "COMPUTER PROGRAMMING", "Core", 3, 1500.0,
+     "Assoc.Prof.Dr.ANIRACH MINGKHWAN"),
 
-    (1006, "060233101", "INTRO TO INFO & NETWORK ENG", "Core", 3, 1500.0,
-     "ผศ.ดร.นิติการ นาคเจือทอง"),
+    (1006, "060233118", "SOFTWARE ENGINEERING", "Core", 3, 1500.0,
+     "Asst.Prof.Dr.SUPEETI KULCHAN"),
 
-    (1007, "060233118", "SOFTWARE ENGINEERING", "Core", 3, 1500.0,
-     "ผศ.ดร.สุปีติ กุลจันทร์"),
+    (1007, "060233205", "ADVANCED NETWORK & PROTOCOL", "Core", 3, 1500.0,
+     "Asst.Prof.Dr.KHANISTA NAMEE"),
 
-    (1008, "060233205", "ADVANCED NETWORK & PROTOCOL", "Core", 3, 1500.0,
-     "ผศ.ดร.ขนิษฐา นามี"),
+    (1008, "060233211", "CLOUD ARCHITECTURE AND APPLICATIONS", "Core", 3, 1500.0,
+     "Asst.Prof.Dr.SARAYOOT TANESSAKULWATTANA"),
 
     (1009, "060233212", "BIG DATA ANALYTICS", "Core", 3, 1500.0,
-     "อ.ดร.ศิรินทรา แว่วศรี"),
+     "Ajarn Dr.SIRINTRA VAIWSRI"),
 
     (1010, "060233214", "INFOR & NETW ENGR SEMINAR", "Core", 1, 500.0,
-     "ผศ.ดร.นิติการ นาคเจือทอง"),
-
+     "Asst.Prof.Dr.NITIGAN NAKJUATONG"),
 ]
 
 
@@ -1319,7 +1743,7 @@ def instructor_portal():
         elif choice == "4":
             instructor_menu()
         elif choice == "5":
-            generate_report()
+            report_menu()
         elif choice == "0":
             return "exit"
         else:
@@ -1347,6 +1771,12 @@ def main_menu():
             else:
                 continue
         elif choice == "0":
+            # สร้าง Report 1-3 อัตโนมัติก่อนปิดโปรแกรม
+            try:
+                generate_all_reports()
+            except Exception as exc:
+                print(f"ไม่สามารถสร้างรายงานอัตโนมัติได้: {exc}")
+
             for fname in [STUDENT_FILE, COURSE_FILE, ENROLL_FILE]:
                 if os.path.exists(fname):
                     try:
@@ -1355,7 +1785,6 @@ def main_menu():
                         os.close(fd)
                     except OSError:
                         pass
-            generate_report()
             log_action("ปิดโปรแกรม (Exit)")
             print("บันทึกและซิงค์ข้อมูลเรียบร้อย ปิดโปรแกรมเรียบร้อยแล้ว")
             break
